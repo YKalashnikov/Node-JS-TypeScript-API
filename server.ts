@@ -15,6 +15,7 @@ app.use(express.json())
 
 app.get('/users', UserCtrl.index)
 app.post('/users', registerValidation, UserCtrl.create)
+app.get('/users/verify', UserCtrl.verify)
 
 
 app.listen(process.env.PORT, (): void => {
