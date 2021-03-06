@@ -9,7 +9,7 @@ export const registerValidation = [
             max: 50
         })
         .withMessage('The length of the characters between 10 and 50'),
-        body('name', 'Enter Name')
+        body('username', 'Enter Username')
         .isString()
         .isLength({
             min: 2,
