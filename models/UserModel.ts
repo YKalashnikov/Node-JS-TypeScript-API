@@ -42,4 +42,12 @@ const UserSchema = new Schema({
     }
 })
 
+UserSchema.set('toJSON', {
+    transform: function (_: any, obj: any) {
+        delete obj.password;
+        delete obj.confirmHash;
+        return obj
+    }
+})
+
 export const UserModel = model<UserModelDocumentInterface>('UserModel', UserSchema)

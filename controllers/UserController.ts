@@ -31,7 +31,7 @@ class UserController {
                 return;
             }
             const user = await UserModel.findById(userId).exec()
-            
+
             if (!user) {
                 res.status(400).json({
                     status: 'error'
@@ -64,7 +64,7 @@ class UserController {
                 email: req.body.email,
                 username: req.body.username,
                 fullname: req.body.fullname,
-                password: req.body.password,
+                password: generateMD5(req.body.password + process.env.SECRET_KEY),
                 confirmHash: generateMD5(process.env.SECRET_KEY || Math.random().toString())
             }
             const user = await UserModel.create(userData)
