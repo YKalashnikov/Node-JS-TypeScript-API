@@ -1,6 +1,7 @@
 import { generateMD5 } from './../utils/generateHash';
-import { UserModel, UserModelInterface } from './../models/UserModel';
+import { UserModel, UserModelDocumentInterface, UserModelInterface } from './../models/UserModel';
 import { validationResult } from 'express-validator';
+import jwt from 'jsonwebtoken';
 import express from 'express';
 import mongoose from 'mongoose';
 import { sendEmail } from '../utils/sendEmail';
@@ -26,7 +27,7 @@ class UserController {
         try {
             const userId = req.params.id;
 
-            if(!isValidObjectId(userId)) {
+            if (!isValidObjectId(userId)) {
                 res.status(400).send()
                 return;
             }
@@ -122,6 +123,34 @@ class UserController {
                 status: 'error',
                 message: error
             })
+        }
+    }
+    
+    async afterLogin(req: express.Request, res: express.Response): Promise<void> {
+        try {
+        const user = req.user? (req.user as UserModelDocumentInterface).toJSON() : undefined
+
+            res.json({
+                status: 'success',
+                data: {
+                    ...user,
+                    token: jwt.sign({ data: user }, process.env.SECRET_KEY || 'Password321!', {expiresIn: '30d'})
+                }
+
+            })
+        } catch (error) {
+            res.status(400).send();
+        }
+    }
+    async getUser(req: express.Request, res: express.Response): Promise<void> {
+        try {
+        const user = req.user? (req.user as UserModelDocumentInterface).toJSON() : undefined
+            res.json({
+                status: 'success',
+                data: user
+            })
+        } catch (error) {
+            res.status(400).send();
         }
     }
 
