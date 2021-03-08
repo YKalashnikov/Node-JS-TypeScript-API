@@ -1,3 +1,4 @@
+import { UserModelInterface } from './../models/UserModel';
 import passport from "passport";
 import { generateMD5 } from './../utils/generateHash';
 import { Strategy as LocalStrategy } from 'passport-local';
@@ -27,13 +28,18 @@ passport.use(
 passport.use(
     new JWTstrategy({
         secretOrKey: process.env.SECRET_KEY || 'Password321!',
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        jwtFromRequest: ExtractJwt.fromHeader('token')
     },
-        async (payload, done) => {
+        async (payload: {data: UserModelInterface}, done) => {
             try {
-                return done(null, payload.user)
+                const user = await UserModel.findById(payload.data._id).exec()
+                if(!user) {
+                   return done(null, false)
+                } else {
+                   return done(null, user)
+                }
             } catch (error) {
-                done(error)
+               return done(error, false)
             }
         })
 )

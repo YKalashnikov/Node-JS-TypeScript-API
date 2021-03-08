@@ -71,15 +71,15 @@ class UserController {
             const user = await UserModel.create(userData)
 
             res.status(201).json({
-                status: 'success',
-                data: user
+                status: 'success'/* ,
+                data: user */
             })
 
             sendEmail({
                 emailFrom: 'admin@test.com',
                 emailTo: userData.email,
                 subject: 'Please confirm your registration',
-                html: `Please follow this link to verify <a href="http://localhost:${process.env.PORT || 8888}/users/verify?hash=${userData.confirmHash}">click this link</a>`
+                html: `Please follow this link to verify <a href="http://localhost:${process.env.PORT || 8888}/auth/verify?hash=${userData.confirmHash}">click this link</a>`
             }, (err: Error | null) => {
                 if (err) {
                     res.json({

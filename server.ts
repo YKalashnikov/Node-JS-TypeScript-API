@@ -18,7 +18,7 @@ app.use(cors())
 
 
 app.get('/users', UserCtrl.index)
-app.get('/auth/me', passport.authenticate('jwt'), UserCtrl.getUser)
+app.get('/users/me', passport.authenticate('jwt', {session: false}), UserCtrl.getUser)
 app.get('/users/:id', registerValidation, UserCtrl.show)
 app.get('/auth/verify', UserCtrl.verify)
 app.post('/auth/login', passport.authenticate('local'), UserCtrl.afterLogin)
