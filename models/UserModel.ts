@@ -51,4 +51,4 @@ UserSchema.set('toJSON', {
     }
 })
 
-export const UserModel = model<UserModelDocumentInterface>('UserModel', UserSchema)
+export const UserModel = model<UserModelDocumentInterface>('User', UserSchema)
