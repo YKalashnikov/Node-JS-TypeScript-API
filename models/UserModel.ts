@@ -40,6 +40,9 @@ const UserSchema = new Schema({
     confirmHash: {
         type: String,
         required: true
+    },
+    timestamp: {
+        type: Date, default: new Date().toISOString()
     }
 })
 

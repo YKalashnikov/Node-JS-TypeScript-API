@@ -86,6 +86,38 @@ class BlogController {
 
         }
     }
+    async update(req: express.Request, res: express.Response): Promise<void> {
+        const user = req.user as UserModelInterface
+
+        try {
+            if (user) {
+                const blogId = req.params.id;
+                if (!isValidObjectId(blogId)) {
+                    res.status(400).send()
+                    return;
+                }
+                const blog = await BlogModel.findById(blogId)
+                if (blog) {
+                    if (String(blog.user._id) === String(user._id)) {
+                        const blogText = req.body.blogText;
+                        blog.blogText = blogText
+                        blog.save()
+                        res.send();
+                    } else {
+                        res.status(403).send()
+                    }
+                } else {
+                    res.status(404).send()
+                }
+            }
+        } catch (error) {
+            res.status(500).json({
+                status: 'error',
+                message: error
+            });
+        }
+    }
+
     async remove(req: express.Request, res: express.Response): Promise<void> {
         const user = req.user as UserModelInterface
 

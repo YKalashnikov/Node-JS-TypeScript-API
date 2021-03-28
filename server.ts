@@ -26,6 +26,7 @@ app.get('/users/:id', registerValidation, UserCtrl.show)
 app.get('/blog', BlogCtrl.index)
 app.get('/blog/:id', BlogCtrl.show)
 app.post('/blog', passport.authenticate('jwt'), blogValidation, BlogCtrl.create)
+app.patch('/blog/:id', passport.authenticate('jwt'), blogValidation, BlogCtrl.update)
 app.delete('/blog/:id', passport.authenticate('jwt'), BlogCtrl.remove)
 
 app.get('/auth/verify', UserCtrl.verify)
