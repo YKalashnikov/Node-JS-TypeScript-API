@@ -1,8 +1,11 @@
+import { FileCtr } from './controllers/FileUploadController';
 import dotenv from 'dotenv'
+import path = require('path');
 
 dotenv.config()
 
 import express from 'express';
+import multer from 'multer';
 import { passport } from './passport/passport'
 import { UserCtrl } from './controllers/UserController';
 import { BlogCtrl } from './controllers/BlogController';
@@ -10,13 +13,28 @@ import { registerValidation } from './validation/Register'
 import { blogValidation } from './validation/Blog'
 import cors from 'cors';
 
+
 import './core/db'
 import { initialize } from 'passport';
 
 const app = express()
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname + '/uploads'))
+    },
+    filename: function (_, file, cb) {
+        const ex = file.mimetype.split('/').pop()
+        cb(null, 'image' + '-' + new Date().toISOString() + '.' + ex)
+    }
+})
+const upload = multer({ storage })
+
+
 app.use(express.json())
 app.use(initialize())
 app.use(cors())
+
 
 
 app.get('/users', UserCtrl.index)
@@ -32,6 +50,7 @@ app.delete('/blog/:id', passport.authenticate('jwt'), BlogCtrl.remove)
 app.get('/auth/verify', UserCtrl.verify)
 app.post('/auth/login', passport.authenticate('local'), UserCtrl.afterLogin)
 app.post('/auth/signup', registerValidation, UserCtrl.create)
+app.post('/upload', upload.single('avatar'), FileCtr.upload)
 
 
 
