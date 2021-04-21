@@ -19,7 +19,12 @@ import { initialize } from 'passport';
 
 const app = express()
 
-const storage = multer.diskStorage({
+app.use(express.json())
+app.use(initialize())
+app.use(cors())
+
+
+multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, path.join(__dirname + '/uploads'))
     },
@@ -28,14 +33,8 @@ const storage = multer.diskStorage({
         cb(null, 'image' + '-' + new Date().toISOString() + '.' + ex)
     }
 })
+const storage = multer.memoryStorage()
 const upload = multer({ storage })
-
-
-app.use(express.json())
-app.use(initialize())
-app.use(cors())
-
-
 
 app.get('/users', UserCtrl.index)
 app.get('/users/me', passport.authenticate('jwt', { session: false }), UserCtrl.getUser)
@@ -51,7 +50,6 @@ app.get('/auth/verify', UserCtrl.verify)
 app.post('/auth/login', passport.authenticate('local'), UserCtrl.afterLogin)
 app.post('/auth/signup', registerValidation, UserCtrl.create)
 app.post('/upload', upload.single('avatar'), FileCtr.upload)
-
 
 
 app.listen(process.env.PORT, (): void => {
